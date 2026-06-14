@@ -28,11 +28,13 @@ app.get('/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() })
 })
 
-// Rotas — descomente conforme cada módulo for implementado
-// app.use('/auth',      require('./modules/auth/auth.routes'))
-// app.use('/users',     require('./modules/users/users.routes'))
+// Rotas
+app.use('/auth', require('./modules/auth/auth.routes'))
+app.use('/users', require('./modules/users/users.routes'))
 // app.use('/favorites', require('./modules/favorites/favorites.routes'))
 // app.use('/history',   require('./modules/history/history.routes'))
+// app.use('/reviews',   require('./modules/reviews/reviews.routes'))
+// app.use('/admin',     require('./modules/admin/admin.routes'))
 
 // Handler global de erros (deve ser o último middleware)
 app.use(errorHandler)

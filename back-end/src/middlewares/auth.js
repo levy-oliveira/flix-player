@@ -13,6 +13,7 @@ const auth = (req, res, next) => {
   try {
     const decoded = jwt.verify(token, JWT_SECRET)
     req.userId = decoded.id
+    req.role = decoded.role  // necessário para o requireManager funcionar
     next()
   } catch (err) {
     return res.status(401).json({ success: false, message: 'Token inválido ou expirado' })
