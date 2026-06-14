@@ -36,6 +36,11 @@ app.use('/users', require('./modules/users/users.routes'))
 // app.use('/reviews',   require('./modules/reviews/reviews.routes'))
 // app.use('/admin',     require('./modules/admin/admin.routes'))
 
+// Rota não encontrada
+app.use((req, res) => {
+  res.status(404).json({ success: false, message: 'Rota não encontrada' })
+})
+
 // Handler global de erros (deve ser o último middleware)
 app.use(errorHandler)
 
