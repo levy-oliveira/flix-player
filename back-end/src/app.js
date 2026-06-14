@@ -5,6 +5,7 @@ const morgan = require('morgan')
 
 const errorHandler = require('./middlewares/errorHandler')
 const { NODE_ENV } = require('./config/env')
+const swagger = require('./config/swagger')
 
 const app = express()
 
@@ -19,13 +20,12 @@ if (NODE_ENV !== 'test') {
   app.use(morgan('dev'))
 }
 
+// Swagger
+swagger.setup(app)
+
 // Healthcheck
 app.get('/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() })
-})
-
-app.use((req, res) => {
-  res.status(404).json({ success: false, message: 'Rota não encontrada' })
 })
 
 // Rotas — descomente conforme cada módulo for implementado
