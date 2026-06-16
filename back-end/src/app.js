@@ -33,7 +33,7 @@ app.use('/auth', require('./modules/auth/auth.routes'))
 app.use('/users', require('./modules/users/users.routes'))
 app.use('/favorites', require('./modules/favorites/favorites.routes'))
 app.use('/history', require('./modules/history/history.routes'))
-// app.use('/reviews',   require('./modules/reviews/reviews.routes'))
+app.use('/reviews', require('./modules/reviews/reviews.routes'))
 // app.use('/admin',     require('./modules/admin/admin.routes'))
 
 // Rota não encontrada
