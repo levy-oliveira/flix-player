@@ -18,12 +18,7 @@ const favoriteSchema = new mongoose.Schema(
             required: true,
         },
     },
-    {
-        timestamps: {
-            createdAt: 'adicionadoEm',
-            updatedAt: false,
-        },
-    }
+    { timestamps: true }
 )
 
 favoriteSchema.index({ userId: 1, tmdbId: 1 }, { unique: true })

@@ -37,7 +37,7 @@ const removeFavorite = async (userId, tmdbId) => {
 }
 
 const listFavorites = async (userId) => {
-    return Favorite.find({ userId }).sort({ adicionadoEm: -1 })
+    return Favorite.find({ userId }).sort({ createdAt: -1 })
 }
 
 module.exports = { addFavorite, removeFavorite, listFavorites }

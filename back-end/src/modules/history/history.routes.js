@@ -2,7 +2,7 @@ const { Router } = require('express')
 const { body, param } = require('express-validator')
 const auth = require('../../middlewares/auth')
 const validate = require('../../middlewares/validate')
-const { saveProgress, listHistory, getHistoryByTmdbId } = require('./history.controller')
+const { saveProgress, listHistory, getHistoryByTmdbId, getWatchLimit } = require('./history.controller')
 
 const router = Router()
 
@@ -53,6 +53,8 @@ const router = Router()
  *         description: Progresso salvo com sucesso
  *       401:
  *         description: Não autorizado
+ *       403:
+ *         description: Limite diário atingido
  *       422:
  *         description: Dados inválidos
  */
@@ -69,6 +71,20 @@ router.post(
     validate,
     saveProgress
 )
+
+/**
+ * @swagger
+ * /history/watch-limit:
+ *   get:
+ *     summary: Retorna o limite diário de títulos abertos pelo usuário autenticado
+ *     tags: [History]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Limite diário calculado com sucesso
+ */
+router.get('/watch-limit', auth, getWatchLimit)
 
 /**
  * @swagger

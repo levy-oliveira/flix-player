@@ -33,12 +33,14 @@ const watchHistorySchema = new mongoose.Schema(
             min: 0,
             default: 0,
         },
+        openedAt: {
+            type: Date,
+            default: Date.now,
+            required: true,
+        },
     },
     {
-        timestamps: {
-            createdAt: false,
-            updatedAt: 'atualizadoEm',
-        },
+        timestamps: false,
     }
 )
 

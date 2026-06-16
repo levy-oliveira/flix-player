@@ -15,6 +15,11 @@ const saveProgress = asyncHandler(async (req, res) => {
     created(res, { history }, 'Progresso salvo com sucesso')
 })
 
+const getWatchLimit = asyncHandler(async (req, res) => {
+    const limitInfo = await historyService.getWatchLimit(req.userId)
+    ok(res, limitInfo)
+})
+
 const listHistory = asyncHandler(async (req, res) => {
     const history = await historyService.listHistory(req.userId)
     ok(res, { history })
@@ -25,4 +30,4 @@ const getHistoryByTmdbId = asyncHandler(async (req, res) => {
     ok(res, { history })
 })
 
-module.exports = { saveProgress, listHistory, getHistoryByTmdbId }
+module.exports = { saveProgress, listHistory, getHistoryByTmdbId, getWatchLimit }
