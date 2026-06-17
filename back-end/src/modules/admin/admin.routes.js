@@ -3,6 +3,7 @@ const { body, param } = require('express-validator')
 const auth = require('../../middlewares/auth')
 const requireManager = require('../../middlewares/requireManager')
 const validate = require('../../middlewares/validate')
+const  {listBlacklistIds}  = require('./admin.public.controller')
 const {
     getStats,
     deleteUser,
@@ -184,6 +185,28 @@ router.delete(
     validate,
     removeFromBlacklist
 )
+
+/**
+ * @swagger
+ * /admin/blacklist/public:
+ *   get:
+ *     summary: Lista apenas os IDs bloqueados (uso interno do proxy TMDB)
+ *     tags: [Admin]
+ *     security: []
+ *     responses:
+ *       200:
+ *         description: Lista de tmdbIds bloqueados
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 ids:
+ *                   type: array
+ *                   items:
+ *                     type: integer
+ */
+router.get('/blacklist/public', listBlacklistIds)
 
 /**
  * @swagger
