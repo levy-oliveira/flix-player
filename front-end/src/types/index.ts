@@ -1,0 +1,82 @@
+// --- TMDB ---
+
+export interface TMDBMovie {
+  id: number
+  title: string
+  overview: string
+  poster_path: string | null
+  backdrop_path: string | null
+  release_date: string
+  vote_average: number
+  vote_count: number
+  genre_ids: number[]
+  adult: boolean
+  original_language: string
+}
+
+export interface TMDBShow {
+  id: number
+  name: string
+  overview: string
+  poster_path: string | null
+  backdrop_path: string | null
+  first_air_date: string
+  vote_average: number
+  vote_count: number
+  genre_ids: number[]
+}
+
+export type TMDBTitle = TMDBMovie | TMDBShow
+
+export interface TMDBPaginatedResponse<T> {
+  page: number
+  results: T[]
+  total_pages: number
+  total_results: number
+}
+
+export interface TMDBGenre {
+  id: number
+  name: string
+}
+
+// --- App ---
+
+export type MediaType = 'movie' | 'tv'
+
+export type Plan = 'free' | 'basic' | 'pro'
+
+export type Role = 'user' | 'manager'
+
+export interface User {
+  id: string
+  name: string
+  email: string
+  role: Role
+  plan: Plan
+}
+
+export interface AuthResponse {
+  token: string
+  user: User
+}
+
+export interface WatchLimit {
+  used: number
+  limit: number
+  blocked: boolean
+}
+
+export interface Review {
+  _id: string
+  userId: string
+  tmdbId: number
+  mediaType: MediaType
+  stars: number
+  createdAt: string
+}
+
+export interface ReviewStats {
+  average: number
+  total: number
+}
