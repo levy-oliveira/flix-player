@@ -2,7 +2,7 @@
 
 import Image from 'next/image'
 import Link from 'next/link'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { tmdbImage } from '@/services/tmdb'
 import type { MediaType } from '@/types'
 
@@ -16,6 +16,11 @@ interface ContentCardProps {
 
 export function ContentCard({ id, title, posterPath, mediaType, voteAverage }: ContentCardProps) {
   const [imageLoaded, setImageLoaded] = useState(false)
+  const [imgSrc, setImgSrc] = useState(() => tmdbImage(posterPath, 'w342'))
+
+  useEffect(() => {
+    setImgSrc(tmdbImage(posterPath, 'w342'))
+  }, [posterPath])
 
   return (
     <Link href={`/${mediaType}/${id}`} className="group block relative rounded overflow-hidden bg-surface-elevated w-full">
@@ -26,14 +31,18 @@ export function ContentCard({ id, title, posterPath, mediaType, voteAverage }: C
 
         {posterPath ? (
           <Image
-            src={tmdbImage(posterPath, 'w342')}
+            src={imgSrc}
             alt={title}
             fill
+            unoptimized
             sizes="(max-width: 640px) 33vw, (max-width: 1024px) 20vw, 160px"
             className={`object-cover transition-all duration-300 group-hover:scale-105 ${imageLoaded ? 'opacity-100' : 'opacity-0'
               }`}
             onLoad={() => setImageLoaded(true)}
-            onError={() => setImageLoaded(true)}
+            onError={() => {
+              setImgSrc('/placeholder_poster.png')
+              setImageLoaded(true)
+            }}
           />
         ) : (
           <div className="absolute inset-0 bg-surface-elevated flex items-center justify-center">

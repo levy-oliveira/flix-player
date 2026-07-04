@@ -3,6 +3,7 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { tmdbImage } from '@/services/tmdb'
+import { useState, useEffect } from 'react'
 import type { MediaType } from '@/types'
 
 interface MovieCardProps {
@@ -15,16 +16,23 @@ interface MovieCardProps {
 
 export function MovieCard({ id, title, posterPath, mediaType, voteAverage }: MovieCardProps) {
   const href = `/${mediaType}/${id}`
+  const [imgSrc, setImgSrc] = useState(() => tmdbImage(posterPath, 'w342'))
+
+  useEffect(() => {
+    setImgSrc(tmdbImage(posterPath, 'w342'))
+  }, [posterPath])
 
   return (
     <Link href={href} className="group block relative rounded overflow-hidden bg-surface-elevated flex-shrink-0 w-[140px] md:w-[160px]">
       <div className="relative aspect-[2/3] w-full">
         <Image
-          src={tmdbImage(posterPath, 'w342')}
+          src={imgSrc}
           alt={title}
           fill
+          unoptimized
           sizes="(max-width: 768px) 140px, 160px"
           className="object-cover transition-transform duration-300 group-hover:scale-105"
+          onError={() => setImgSrc('/placeholder_poster.png')}
         />
         {/* Overlay no hover */}
         <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-colors duration-300" />
