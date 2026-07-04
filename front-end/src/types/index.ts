@@ -12,6 +12,7 @@ export interface TMDBMovie {
   genre_ids: number[]
   adult: boolean
   original_language: string
+  popularity: number
 }
 
 export interface TMDBShow {
@@ -24,6 +25,7 @@ export interface TMDBShow {
   vote_average: number
   vote_count: number
   genre_ids: number[]
+  popularity: number
 }
 
 export type TMDBTitle = TMDBMovie | TMDBShow

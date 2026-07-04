@@ -13,6 +13,11 @@ export const tmdbService = {
   getPopularMovies: (page = 1) =>
     tmdb.get<TMDBPaginatedResponse<TMDBMovie>>('/movie/popular', { params: { page } }),
 
+  getTopRatedMovies: (page = 1) =>
+    tmdb.get<TMDBPaginatedResponse<TMDBMovie>>('/movie/top_rated', { params: { page } }),
+
+  getNowPlayingMovies: (page = 1) =>
+    tmdb.get<TMDBPaginatedResponse<TMDBMovie>>('/movie/now_playing', { params: { page } }),
   getMovieDetails: (id: number) =>
     tmdb.get<TMDBMovie>(`/movie/${id}`),
 

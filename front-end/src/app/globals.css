@@ -53,4 +53,13 @@
   .text-shadow-card {
     text-shadow: 0 1px 4px rgba(0, 0, 0, 0.9);
   }
+
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
 }
