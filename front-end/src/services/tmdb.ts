@@ -1,5 +1,5 @@
 import axios from 'axios'
-import type { TMDBMovie, TMDBShow, TMDBPaginatedResponse, TMDBGenre } from '@/types'
+import type { TMDBMovie, TMDBShow, TMDBMultiResult, TMDBPaginatedResponse, TMDBGenre } from '@/types'
 
 const tmdb = axios.create({
   baseURL: '/api/tmdb',
@@ -43,7 +43,7 @@ export const tmdbService = {
 
   // Busca e gêneros
   search: (query: string, page = 1) =>
-    tmdb.get<TMDBPaginatedResponse<TMDBMovie | TMDBShow>>('/search/multi', {
+    tmdb.get<TMDBPaginatedResponse<TMDBMultiResult>>('/search/multi', {
       params: { query, page },
     }),
 
@@ -61,6 +61,6 @@ export const tmdbService = {
 
 // Helper para montar URL de imagem da TMDB
 export const tmdbImage = (path: string | null, size: 'w185' | 'w342' | 'w500' | 'w780' | 'original' = 'w500') => {
-  if (!path) return '/placeholder-poster.png'
+  if (!path) return '/placeholder_poster.png'
   return `https://image.tmdb.org/t/p/${size}${path}`
 }

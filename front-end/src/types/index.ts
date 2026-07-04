@@ -28,6 +28,12 @@ export interface TMDBShow {
 
 export type TMDBTitle = TMDBMovie | TMDBShow
 
+// Resultado do /search/multi: cada item vem com media_type (inclui pessoas)
+export type TMDBMultiResult =
+  | (TMDBMovie & { media_type: 'movie' })
+  | (TMDBShow & { media_type: 'tv' })
+  | { media_type: 'person'; id: number; name: string }
+
 export interface TMDBPaginatedResponse<T> {
   page: number
   results: T[]
