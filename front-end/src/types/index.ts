@@ -12,7 +12,26 @@ export interface TMDBMovie {
   genre_ids: number[]
   adult: boolean
   original_language: string
-  popularity: number
+}
+
+export interface TMDBSeason {
+  id: number
+  name: string
+  season_number: number
+  episode_count: number
+  air_date: string | null
+  poster_path: string | null
+}
+
+export interface TMDBEpisode {
+  id: number
+  name: string
+  episode_number: number
+  season_number: number
+  overview: string
+  still_path: string | null
+  air_date: string | null
+  runtime: number | null
 }
 
 export interface TMDBShow {
@@ -26,6 +45,9 @@ export interface TMDBShow {
   vote_count: number
   genre_ids: number[]
   popularity: number
+  number_of_seasons?: number
+  number_of_episodes?: number
+  seasons?: TMDBSeason[]
 }
 
 export type TMDBTitle = TMDBMovie | TMDBShow

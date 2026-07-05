@@ -32,7 +32,7 @@ export function ContentCard({ id, title, posterPath, mediaType, voteAverage }: C
         {posterPath ? (
           <Image
             src={imgSrc}
-            alt={title}
+            alt={`Poster de ${title}`}
             fill
             unoptimized
             sizes="(max-width: 640px) 33vw, (max-width: 1024px) 20vw, 160px"
