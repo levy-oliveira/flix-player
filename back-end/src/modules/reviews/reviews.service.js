@@ -1,11 +1,13 @@
 const Review = require('../../models/Review')
 
 async function upsertReview(userId, { tmdbId, mediaType, stars }) {
-    return Review.findOneAndUpdate(
+    const existing = await Review.findOne({ userId, tmdbId })
+    const review = await Review.findOneAndUpdate(
         { userId, tmdbId },
         { userId, tmdbId, mediaType, stars },
         { upsert: true, new: true }
     )
+    return { review, isNew: !existing }
 }
 
 async function removeReview(userId, tmdbId) {
@@ -32,4 +34,8 @@ async function getReviewStats(tmdbId) {
     return { average: parseFloat(result.average.toFixed(1)), total: result.total }
 }
 
-module.exports = { upsertReview, removeReview, listMyReviews, getReviewStats }
+async function getMyReview(userId, tmdbId) {
+    return Review.findOne({ userId, tmdbId })
+}
+
+module.exports = { upsertReview, removeReview, listMyReviews, getReviewStats, getMyReview }

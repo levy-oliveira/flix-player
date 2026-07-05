@@ -2,7 +2,7 @@ const { Router } = require('express')
 const { body, param } = require('express-validator')
 const auth = require('../../middlewares/auth')
 const validate = require('../../middlewares/validate')
-const { upsertReview, removeReview, listMyReviews, getReviewStats } = require('./reviews.controller')
+const { upsertReview, removeReview, listMyReviews, getReviewStats, getMyReview } = require('./reviews.controller')
 
 const router = Router()
 
@@ -102,6 +102,16 @@ router.delete(
  *         description: Lista de avaliações do usuário
  */
 router.get('/me', auth, listMyReviews)
+
+
+router.get(
+    '/me/:tmdbId',
+    auth,
+    [param('tmdbId').isInt({ min: 1 }).withMessage('tmdbId inválido')],
+    validate,
+    getMyReview
+)
+
 
 /**
  * @swagger
