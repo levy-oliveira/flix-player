@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import Image from 'next/image'
 import { useContentData } from '@/hooks/useContentData'
+import { useFavoriteToggle } from '@/hooks/useFavorites'
 import { VidLinkPlayer } from './VidLinkPlayer'
 import { EpisodeSelector } from './EpisodeSelector'
 import { ReviewsSection } from './ReviewsSection'
@@ -27,6 +28,7 @@ function InfoSkeleton() {
 
 export function ContentPage({ id, type }: ContentPageProps) {
     const { content, credits, similar, seasons, loadingContent, loadingCredits, loadingSimilar, error } = useContentData(id, type)
+    const { favorite, pending: favoritePending, toggle: toggleFavorite } = useFavoriteToggle(id, type)
     const [season, setSeason] = useState(1)
     const [episode, setEpisode] = useState(1)
     const [showPlayer, setShowPlayer] = useState(false)
@@ -127,9 +129,26 @@ export function ContentPage({ id, type }: ContentPageProps) {
                                     </span>
                                 </div>
 
-                                <h1 className="font-display text-3xl md:text-5xl text-text-primary mb-3">
-                                    {content.title}
-                                </h1>
+                                <div className="flex items-center gap-3 mb-3">
+                                    <h1 className="font-display text-3xl md:text-5xl text-text-primary">
+                                        {content.title}
+                                    </h1>
+                                    <button
+                                        onClick={toggleFavorite}
+                                        disabled={favoritePending}
+                                        title={favorite ? 'Remover dos favoritos' : 'Adicionar aos favoritos'}
+                                        className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full border border-border text-text-secondary hover:text-star hover:border-star transition-colors disabled:opacity-50"
+                                    >
+                                        <svg
+                                            className={`w-5 h-5 ${favorite ? 'text-star fill-star' : 'fill-none'}`}
+                                            viewBox="0 0 24 24"
+                                            stroke="currentColor"
+                                            strokeWidth="2"
+                                        >
+                                            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                                        </svg>
+                                    </button>
+                                </div>
 
                                 <p className="text-text-secondary font-sans text-sm md:text-base leading-relaxed mb-6">
                                     {content.overview}

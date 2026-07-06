@@ -1,18 +1,11 @@
 const Favorite = require('../../models/Favorite')
 
 const addFavorite = async (userId, { tmdbId, mediaType }) => {
+    // userId e tmdbId vêm do filtro no insert; mediaType não pode aparecer
+    // em $set e $setOnInsert ao mesmo tempo (conflito no MongoDB)
     const favorite = await Favorite.findOneAndUpdate(
         { userId, tmdbId },
-        {
-            $set: {
-                mediaType,
-            },
-            $setOnInsert: {
-                userId,
-                tmdbId,
-                mediaType,
-            },
-        },
+        { $set: { mediaType } },
         {
             upsert: true,
             new: true,

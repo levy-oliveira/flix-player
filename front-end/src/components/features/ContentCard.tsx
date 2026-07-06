@@ -12,9 +12,10 @@ interface ContentCardProps {
   posterPath: string | null
   mediaType: MediaType
   voteAverage?: number
+  subtitle?: string
 }
 
-export function ContentCard({ id, title, posterPath, mediaType, voteAverage }: ContentCardProps) {
+export function ContentCard({ id, title, posterPath, mediaType, voteAverage, subtitle }: ContentCardProps) {
   const [imageLoaded, setImageLoaded] = useState(false)
   const [imgSrc, setImgSrc] = useState(() => tmdbImage(posterPath, 'w342'))
 
@@ -70,6 +71,11 @@ export function ContentCard({ id, title, posterPath, mediaType, voteAverage }: C
           <p className="text-white text-xs font-sans truncate font-medium text-shadow-card">
             {title}
           </p>
+          {subtitle && (
+            <p className="text-text-secondary text-[10px] font-sans truncate text-shadow-card">
+              {subtitle}
+            </p>
+          )}
         </div>
       </div>
     </Link>
