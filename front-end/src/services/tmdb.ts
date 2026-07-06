@@ -62,6 +62,32 @@ export const tmdbService = {
     tmdb.get<TMDBPaginatedResponse<TMDBMovie | TMDBShow>>(`/discover/${mediaType}`, {
       params: { with_genres: genreId, page },
     }),
+
+  discover: (mediaType: 'movie' | 'tv', filters: DiscoverFilters = {}) => {
+    const { genreId, year, country, sortBy = 'popularity.desc', page = 1 } = filters
+    const params: Record<string, string | number> = { page, sort_by: sortBy }
+
+    if (genreId) params.with_genres = genreId
+    if (country) params.with_origin_country = country
+    if (year) {
+      // O parâmetro de ano difere entre filmes e séries na TMDB
+      params[mediaType === 'movie' ? 'primary_release_year' : 'first_air_date_year'] = year
+    }
+    // Ao ordenar por nota, exige um mínimo de votos para evitar títulos obscuros
+    if (sortBy === 'vote_average.desc') params['vote_count.gte'] = 200
+
+    return tmdb.get<TMDBPaginatedResponse<TMDBMovie | TMDBShow>>(`/discover/${mediaType}`, { params })
+  },
+}
+
+export type DiscoverSort = 'popularity.desc' | 'vote_average.desc' | 'primary_release_date.desc' | 'first_air_date.desc'
+
+export interface DiscoverFilters {
+  genreId?: number
+  year?: number
+  country?: string
+  sortBy?: DiscoverSort
+  page?: number
 }
 
 // Helper para montar URL de imagem da TMDB
