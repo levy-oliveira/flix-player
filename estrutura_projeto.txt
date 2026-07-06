@@ -1,0 +1,204 @@
+ESTRUTURA DO PROJETO - FLIX PLAYER
+
+1. Visao geral do projeto
+
+O Flix Player e uma aplicacao web para consulta, exibicao e organizacao de filmes e series. O sistema foi dividido em duas partes principais: um front-end, responsavel pela interface do usuario, navegacao e consumo de APIs; e um back-end, responsavel pelas regras de negocio, autenticacao, persistencia de dados e exposicao de rotas HTTP.
+
+A aplicacao permite cadastro e login de usuarios, busca de conteudos, visualizacao de detalhes de filmes e series, reproducao por meio de player externo, gerenciamento de favoritos, historico de visualizacao, avaliacoes e funcionalidades administrativas.
+
+2. Proposta de organizacao das pastas
+
+Raiz do projeto:
+
+- front-end: aplicacao cliente desenvolvida com Next.js, React e TypeScript.
+- back-end: API REST desenvolvida com Node.js, Express e MongoDB.
+- .gitignore: configuracao de arquivos e pastas ignorados pelo Git.
+
+Estrutura principal do front-end:
+
+- front-end/src/app: rotas e paginas da aplicacao usando o App Router do Next.js.
+  - (auth): telas e layout relacionados a autenticacao, como login e cadastro.
+  - (platform): area principal da plataforma, incluindo home, busca, filmes e series.
+  - api/tmdb: rota interna do Next.js usada como intermediaria para acessar a API da TMDB.
+  - apresentacao: pagina de apresentacao do projeto.
+  - layout.tsx: layout raiz da aplicacao.
+  - globals.css: estilos globais.
+
+- front-end/src/components: componentes reutilizaveis da interface.
+  - ui: componentes genericos, como Button, Input, Modal, Badge, StarRating e Spinner.
+  - features: componentes ligados a funcionalidades da aplicacao, como Header, ContentCard, HeroBanner, ContentCarousel, ContentPage, ReviewsSection, EpisodeSelector e VidLinkPlayer.
+
+- front-end/src/hooks: hooks personalizados para reaproveitar logica de estado e chamadas de dados.
+  - useAuth: fluxo de login, cadastro e logout.
+  - useHomeData: carregamento dos dados exibidos na pagina inicial.
+  - useContentData: carregamento de detalhes de filmes e series.
+  - useReviews: manipulacao das avaliacoes.
+
+- front-end/src/services: configuracao de comunicacao com APIs.
+  - api.ts: cliente Axios para comunicacao com o back-end.
+  - tmdb.ts: servico para consultar filmes, series, generos, busca e imagens da TMDB.
+
+- front-end/src/stores: gerenciamento de estado global.
+  - authStore.ts: estado de autenticacao usando Zustand, com token, usuario e persistencia local.
+
+- front-end/src/lib: funcoes auxiliares da aplicacao.
+  - contentNormalizer.ts: normalizacao de dados de conteudo.
+  - blacklist.ts: apoio a regras de bloqueio de conteudos.
+  - vidlink.ts: integracao com o player externo.
+
+- front-end/src/types: definicoes de tipos TypeScript usadas no projeto.
+- front-end/public: arquivos publicos, como a imagem placeholder_poster.png.
+
+Estrutura principal do back-end:
+
+- back-end/server.js: ponto de entrada do servidor.
+- back-end/src/app.js: configuracao principal da aplicacao Express, middlewares e rotas.
+
+- back-end/src/config: configuracoes da aplicacao.
+  - db.js: conexao com o MongoDB.
+  - env.js: leitura das variaveis de ambiente.
+  - planLimits.js: regras relacionadas aos planos de usuario.
+  - seed.js: script de populacao inicial.
+  - swagger.js: configuracao da documentacao Swagger.
+
+- back-end/src/models: modelos do banco de dados usando Mongoose.
+  - User: usuarios, senha criptografada, papel e plano.
+  - Favorite: conteudos favoritados por usuario.
+  - Review: avaliacoes com estrelas.
+  - WatchHistory: historico de visualizacao.
+  - Blacklist: conteudos bloqueados ou controlados pela administracao.
+
+- back-end/src/modules: modulos organizados por dominio.
+  - auth: cadastro, login e geracao de token.
+  - users: operacoes relacionadas a usuarios.
+  - favorites: gerenciamento de favoritos.
+  - history: historico de visualizacao.
+  - reviews: avaliacoes de conteudos.
+  - admin: funcionalidades administrativas.
+
+Cada modulo segue a separacao:
+- routes: definicao das rotas HTTP.
+- controller: entrada da requisicao e resposta ao cliente.
+- service: regra de negocio e acesso aos modelos.
+
+- back-end/src/middlewares: middlewares reutilizaveis.
+  - auth.js: validacao de token JWT.
+  - requireManager.js: restricao para usuarios administradores/gerentes.
+  - validate.js: tratamento de validacoes do express-validator.
+  - errorHandler.js: tratamento global de erros.
+
+- back-end/src/utils: funcoes auxiliares.
+  - asyncHandler.js: tratamento de erros em funcoes assincronas.
+  - response.js: padronizacao de respostas.
+
+3. Principais componentes e responsabilidades
+
+No front-end, os principais componentes sao:
+
+- Header: barra superior da aplicacao, com navegacao e acoes de usuario.
+- HeroBanner: destaque visual da pagina inicial, exibindo conteudos em evidencia.
+- ContentCarousel: carrosseis de filmes e series por categoria.
+- ContentCard: card reutilizavel para exibir poster, titulo e informacoes de conteudo.
+- ContentPage: pagina base de detalhes de filme ou serie.
+- EpisodeSelector: selecao de temporada e episodio para series.
+- VidLinkPlayer: integracao com o player de reproducao.
+- ReviewsSection: area de avaliacoes dos usuarios.
+- Button, Input, Modal, Badge, StarRating e Spinner: componentes de interface reutilizaveis.
+
+No back-end, os principais componentes logicos sao:
+
+- Modulo de autenticacao: cria usuarios, valida credenciais e gera JWT.
+- Modulo de usuarios: gerencia informacoes dos usuarios.
+- Modulo de favoritos: permite adicionar, listar e remover favoritos.
+- Modulo de historico: registra o progresso e os conteudos acessados.
+- Modulo de avaliacoes: permite registrar notas de 1 a 5 estrelas.
+- Modulo administrativo: concentra funcoes de controle, como gerenciamento de usuarios, planos ou conteudos.
+- Middlewares: aplicam seguranca, autenticacao, validacao e tratamento de erros antes ou depois das rotas.
+
+4. Bibliotecas externas utilizadas
+
+Front-end:
+
+- Next.js: framework React usado para rotas, renderizacao e organizacao da aplicacao.
+- React e React DOM: construcao da interface baseada em componentes.
+- TypeScript: tipagem estatica para melhorar manutencao e reduzir erros.
+- Axios: cliente HTTP para consumo do back-end e da API da TMDB.
+- Zustand: gerenciamento de estado global de autenticacao.
+- Tailwind CSS: estilização da interface com classes utilitarias.
+- clsx: composicao condicional de classes CSS.
+- ESLint: padronizacao e analise estatica do codigo.
+
+Back-end:
+
+- Node.js: ambiente de execucao JavaScript no servidor.
+- Express: framework para criacao da API REST.
+- Mongoose: modelagem e acesso ao MongoDB.
+- MongoDB: banco de dados NoSQL usado para usuarios, favoritos, avaliacoes e historico.
+- bcryptjs: criptografia de senhas.
+- jsonwebtoken: geracao e validacao de tokens JWT.
+- express-validator: validacao dos dados recebidos nas requisicoes.
+- cors: liberacao controlada de acesso entre front-end e back-end.
+- helmet: configuracoes de seguranca HTTP.
+- morgan: logs de requisicoes durante o desenvolvimento.
+- dotenv: carregamento de variaveis de ambiente.
+- swagger-jsdoc e swagger-ui-express: documentacao da API.
+- axios: consumo de APIs externas quando necessario.
+- jest e supertest: testes automatizados do back-end.
+- nodemon: reinicio automatico do servidor em desenvolvimento.
+
+5. Aplicacao dos topicos da disciplina de Desenvolvimento de Software para Web
+
+HTML, CSS e construcao de interfaces:
+O projeto aplica os conceitos de estrutura visual, semantica de telas e responsividade por meio de componentes React, paginas Next.js e estilos globais com Tailwind CSS. A interface foi dividida em componentes reutilizaveis, facilitando manutencao e padronizacao visual.
+
+JavaScript e TypeScript:
+A logica da aplicacao foi implementada com JavaScript no back-end e TypeScript no front-end. O TypeScript foi usado para definir tipos de usuarios, conteudos, respostas da TMDB e estruturas de dados, reduzindo erros durante o desenvolvimento.
+
+Componentizacao:
+O front-end utiliza componentes independentes para cards, botoes, modais, campos de entrada, carrosseis, player, avaliacoes e paginas de conteudo. Essa abordagem evita repeticao de codigo e torna a interface mais organizada.
+
+Rotas e navegacao:
+O projeto usa o App Router do Next.js para organizar rotas como login, cadastro, home, busca, detalhes de filmes e detalhes de series. No back-end, o Express organiza rotas REST para autenticacao, usuarios, favoritos, historico, avaliacoes e administracao.
+
+Consumo de APIs:
+O front-end consome o back-end por meio do servico api.ts e tambem acessa dados externos da TMDB por meio de uma rota interna em api/tmdb. Isso demonstra integracao entre cliente, servidor proprio e API externa.
+
+Arquitetura cliente-servidor:
+A separacao entre front-end e back-end mostra a arquitetura cliente-servidor. O cliente cuida da experiencia do usuario e envia requisicoes HTTP, enquanto o servidor processa regras de negocio, valida dados, acessa o banco e retorna respostas em JSON.
+
+API REST:
+O back-end expoe endpoints RESTful para as principais entidades do sistema. As rotas usam metodos HTTP adequados para criar, consultar, atualizar ou remover dados, seguindo o modelo comum de aplicacoes web modernas.
+
+Banco de dados:
+O MongoDB foi usado para persistir usuarios, favoritos, historico, avaliacoes e regras administrativas. O Mongoose define schemas, validacoes, relacionamentos por ObjectId e indices unicos para evitar duplicidade de registros.
+
+Autenticacao e autorizacao:
+O projeto implementa cadastro e login com senha criptografada usando bcryptjs. A autenticacao e feita com JWT, enviado no cabecalho Authorization das requisicoes. Tambem existe controle de permissao por papel de usuario, como user e manager.
+
+Validacao de dados:
+O express-validator valida entradas como nome, email, senha e plano antes que os dados cheguem as regras de negocio. Isso evita registros invalidos e melhora a seguranca da API.
+
+Seguranca:
+Foram aplicados recursos como criptografia de senha, JWT, Helmet para cabecalhos HTTP, CORS para comunicacao entre origens e middlewares para proteger rotas autenticadas.
+
+Gerenciamento de estado:
+O front-end usa Zustand para manter o estado de autenticacao, usuario logado e token. O estado tambem e persistido no localStorage e em cookie para apoiar a protecao de rotas.
+
+Middlewares:
+O back-end utiliza middlewares para autenticar usuarios, validar dados, restringir acesso administrativo, tratar erros e configurar seguranca. Isso mostra o uso de uma cadeia de processamento comum em frameworks web.
+
+Tratamento de erros:
+A API possui um middleware global de erros e utilitarios para padronizar respostas. No front-end, interceptadores do Axios tratam casos como token expirado e redirecionam o usuario para o login.
+
+Documentacao de API:
+O uso de Swagger permite documentar rotas, parametros e respostas da API, facilitando testes, manutencao e entendimento do sistema por outros desenvolvedores.
+
+Controle de versao e organizacao do desenvolvimento:
+O projeto esta organizado em pastas separadas, usa package.json para dependencias e scripts, e possui .gitignore para evitar versionamento de arquivos desnecessarios. Essa estrutura ajuda no trabalho incremental e na manutencao do codigo.
+
+Testes:
+O back-end inclui dependencias como Jest e Supertest, que permitem criar testes automatizados para verificar endpoints e regras da API. Mesmo quando nem todos os cenarios estao cobertos, a estrutura ja prepara o projeto para validacao automatizada.
+
+6. Conclusao
+
+O Flix Player aplica os principais conceitos de Desenvolvimento de Software para Web em uma aplicacao completa, com interface moderna, consumo de API externa, API propria, banco de dados, autenticacao, autorizacao, validacao, documentacao e organizacao modular. A separacao entre front-end e back-end facilita a evolucao do sistema e demonstra uma arquitetura semelhante a projetos web reais.

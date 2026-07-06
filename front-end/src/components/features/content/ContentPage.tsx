@@ -108,16 +108,6 @@ export function ContentPage({ id, type }: ContentPageProps) {
                                     className="object-cover"
                                 />
                             </div>
-
-                            {/* Avaliações */}
-                            {content && (
-                                <ReviewsSection
-                                    tmdbId={content.id}
-                                    mediaType={type}
-                                    tmdbVoteAverage={content.voteAverage}
-                                    tmdbVoteCount={content.voteCount}
-                                />
-                            )}
                         </div>
                     )}
 
@@ -186,6 +176,15 @@ export function ContentPage({ id, type }: ContentPageProps) {
                                         </>
                                     )}
                                 </div>
+                                {/* Avaliações */}
+                                {content && (
+                                    <ReviewsSection
+                                        tmdbId={content.id}
+                                        mediaType={type}
+                                        tmdbVoteAverage={content.voteAverage}
+                                        tmdbVoteCount={content.voteCount}
+                                    />
+                                )}
                             </>
                         ) : null}
                     </div>
