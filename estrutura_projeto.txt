@@ -4,7 +4,7 @@ ESTRUTURA DO PROJETO - FLIX PLAYER
 
 O Flix Player e uma aplicacao web para consulta, exibicao e organizacao de filmes e series. O sistema foi dividido em duas partes principais: um front-end, responsavel pela interface do usuario, navegacao e consumo de APIs; e um back-end, responsavel pelas regras de negocio, autenticacao, persistencia de dados e exposicao de rotas HTTP.
 
-A aplicacao permite cadastro e login de usuarios, busca de conteudos, visualizacao de detalhes de filmes e series, reproducao por meio de player externo, gerenciamento de favoritos, historico de visualizacao, avaliacoes e funcionalidades administrativas.
+A aplicacao permite cadastro e login de usuarios, busca de conteudos, navegacao por catalogo com filtros, visualizacao de detalhes de filmes e series, reproducao por meio de player externo, gerenciamento de favoritos, historico de visualizacao, avaliacoes, configuracoes de conta/preferencias e funcionalidades administrativas.
 
 2. Proposta de organizacao das pastas
 
@@ -18,14 +18,14 @@ Estrutura principal do front-end:
 
 - front-end/src/app: rotas e paginas da aplicacao usando o App Router do Next.js.
   - (auth): telas e layout relacionados a autenticacao, como login e cadastro.
-  - (platform): area principal da plataforma, incluindo home, busca, filmes e series.
-  - api/tmdb: rota interna do Next.js usada como intermediaria para acessar a API da TMDB.
+  - (platform): area principal da plataforma, incluindo home, busca, catalogo, favoritos, configuracoes, filmes e series.
+  - api/tmdb: rota interna do Next.js usada como intermediaria para acessar a API da TMDB, aplicar idioma pt-BR e filtrar conteudos bloqueados.
   - apresentacao: pagina de apresentacao do projeto.
   - layout.tsx: layout raiz da aplicacao.
   - globals.css: estilos globais.
 
 - front-end/src/components: componentes reutilizaveis da interface.
-  - ui: componentes genericos, como Button, Input, Modal, Badge, StarRating e Spinner.
+  - ui: componentes genericos, como Button, Input, Modal, Badge, StarRating, Spinner e FilterSelect.
   - features: componentes ligados a funcionalidades da aplicacao, como Header, ContentCard, HeroBanner, ContentCarousel, ContentPage, ReviewsSection, EpisodeSelector e VidLinkPlayer.
 
 - front-end/src/hooks: hooks personalizados para reaproveitar logica de estado e chamadas de dados.
@@ -33,17 +33,18 @@ Estrutura principal do front-end:
   - useHomeData: carregamento dos dados exibidos na pagina inicial.
   - useContentData: carregamento de detalhes de filmes e series.
   - useReviews: manipulacao das avaliacoes.
+  - useFavorites: listagem, inclusao, remocao e verificacao de favoritos.
 
 - front-end/src/services: configuracao de comunicacao com APIs.
   - api.ts: cliente Axios para comunicacao com o back-end.
-  - tmdb.ts: servico para consultar filmes, series, generos, busca e imagens da TMDB.
+  - tmdb.ts: servico para consultar filmes, series, generos, busca, imagens e descoberta de titulos com filtros da TMDB.
 
 - front-end/src/stores: gerenciamento de estado global.
   - authStore.ts: estado de autenticacao usando Zustand, com token, usuario e persistencia local.
 
 - front-end/src/lib: funcoes auxiliares da aplicacao.
   - contentNormalizer.ts: normalizacao de dados de conteudo.
-  - blacklist.ts: apoio a regras de bloqueio de conteudos.
+  - blacklist.ts: apoio a regras de bloqueio de conteudos, usado pela rota interna da TMDB.
   - vidlink.ts: integracao com o player externo.
 
 - front-end/src/types: definicoes de tipos TypeScript usadas no projeto.
@@ -103,7 +104,15 @@ No front-end, os principais componentes sao:
 - EpisodeSelector: selecao de temporada e episodio para series.
 - VidLinkPlayer: integracao com o player de reproducao.
 - ReviewsSection: area de avaliacoes dos usuarios.
+- FilterSelect: componente de selecao usado nas paginas de catalogo e favoritos para filtrar ou ordenar resultados.
 - Button, Input, Modal, Badge, StarRating e Spinner: componentes de interface reutilizaveis.
+
+As principais telas adicionadas ou destacadas no front-end sao:
+
+- BrowsePage/BrowseResults: pagina de catalogo com filtros por genero, ano, pais, tipo de midia e ordenacao.
+- FavoritesPage: pagina dos favoritos do usuario, com abas para tudo, filmes e series, ordenacao e remocao de itens.
+- SettingsPage: pagina de configuracoes, com dados da conta, alteracao de nome/senha, preferencias de idioma, legendas, perfis e controle parental.
+- SearchResults: pagina de resultados de busca.
 
 No back-end, os principais componentes logicos sao:
 
@@ -115,6 +124,8 @@ No back-end, os principais componentes logicos sao:
 - Modulo administrativo: concentra funcoes de controle, como gerenciamento de usuarios, planos ou conteudos.
 - Middlewares: aplicam seguranca, autenticacao, validacao e tratamento de erros antes ou depois das rotas.
 
+O modulo de usuarios tambem expoe rotas para consultar o perfil autenticado e atualizar nome ou senha pela tela de configuracoes.
+
 4. Bibliotecas externas utilizadas
 
 Front-end:
@@ -124,7 +135,7 @@ Front-end:
 - TypeScript: tipagem estatica para melhorar manutencao e reduzir erros.
 - Axios: cliente HTTP para consumo do back-end e da API da TMDB.
 - Zustand: gerenciamento de estado global de autenticacao.
-- Tailwind CSS: estilização da interface com classes utilitarias.
+- Tailwind CSS: estilizacao da interface com classes utilitarias.
 - clsx: composicao condicional de classes CSS.
 - ESLint: padronizacao e analise estatica do codigo.
 
@@ -158,31 +169,34 @@ Componentizacao:
 O front-end utiliza componentes independentes para cards, botoes, modais, campos de entrada, carrosseis, player, avaliacoes e paginas de conteudo. Essa abordagem evita repeticao de codigo e torna a interface mais organizada.
 
 Rotas e navegacao:
-O projeto usa o App Router do Next.js para organizar rotas como login, cadastro, home, busca, detalhes de filmes e detalhes de series. No back-end, o Express organiza rotas REST para autenticacao, usuarios, favoritos, historico, avaliacoes e administracao.
+O projeto usa o App Router do Next.js para organizar rotas como login, cadastro, home, busca, catalogo, favoritos, configuracoes, detalhes de filmes e detalhes de series. A pagina de catalogo usa parametros de URL para controlar filtros como tipo, genero, ano, pais e ordenacao. No back-end, o Express organiza rotas REST para autenticacao, usuarios, favoritos, historico, avaliacoes e administracao.
 
 Consumo de APIs:
-O front-end consome o back-end por meio do servico api.ts e tambem acessa dados externos da TMDB por meio de uma rota interna em api/tmdb. Isso demonstra integracao entre cliente, servidor proprio e API externa.
+O front-end consome o back-end por meio do servico api.ts e tambem acessa dados externos da TMDB por meio de uma rota interna em api/tmdb. Essa rota interna adiciona a chave da API, define o idioma pt-BR, usa cache/revalidacao e filtra conteudos presentes na blacklist. Isso demonstra integracao entre cliente, servidor proprio e API externa.
 
 Arquitetura cliente-servidor:
 A separacao entre front-end e back-end mostra a arquitetura cliente-servidor. O cliente cuida da experiencia do usuario e envia requisicoes HTTP, enquanto o servidor processa regras de negocio, valida dados, acessa o banco e retorna respostas em JSON.
 
 API REST:
-O back-end expoe endpoints RESTful para as principais entidades do sistema. As rotas usam metodos HTTP adequados para criar, consultar, atualizar ou remover dados, seguindo o modelo comum de aplicacoes web modernas.
+O back-end expoe endpoints RESTful para as principais entidades do sistema. As rotas usam metodos HTTP adequados para criar, consultar, atualizar ou remover dados, seguindo o modelo comum de aplicacoes web modernas. Exemplos disso sao o login/cadastro em auth, consulta e atualizacao do perfil em users/me, inclusao/remocao de favoritos, historico, avaliacoes e rotas administrativas.
 
 Banco de dados:
-O MongoDB foi usado para persistir usuarios, favoritos, historico, avaliacoes e regras administrativas. O Mongoose define schemas, validacoes, relacionamentos por ObjectId e indices unicos para evitar duplicidade de registros.
+O MongoDB foi usado para persistir usuarios, favoritos, historico, avaliacoes e regras administrativas. O Mongoose define schemas, validacoes, relacionamentos por ObjectId e indices unicos para evitar duplicidade de registros, como um mesmo usuario favoritar ou avaliar o mesmo titulo mais de uma vez.
 
 Autenticacao e autorizacao:
 O projeto implementa cadastro e login com senha criptografada usando bcryptjs. A autenticacao e feita com JWT, enviado no cabecalho Authorization das requisicoes. Tambem existe controle de permissao por papel de usuario, como user e manager.
 
 Validacao de dados:
-O express-validator valida entradas como nome, email, senha e plano antes que os dados cheguem as regras de negocio. Isso evita registros invalidos e melhora a seguranca da API.
+O express-validator valida entradas como nome, email, senha e plano antes que os dados cheguem as regras de negocio. Ele tambem e usado na atualizacao de perfil, garantindo que o nome nao seja vazio e que a nova senha tenha tamanho minimo. Isso evita registros invalidos e melhora a seguranca da API.
 
 Seguranca:
 Foram aplicados recursos como criptografia de senha, JWT, Helmet para cabecalhos HTTP, CORS para comunicacao entre origens e middlewares para proteger rotas autenticadas.
 
 Gerenciamento de estado:
-O front-end usa Zustand para manter o estado de autenticacao, usuario logado e token. O estado tambem e persistido no localStorage e em cookie para apoiar a protecao de rotas.
+O front-end usa Zustand para manter o estado de autenticacao, usuario logado e token. O estado tambem e persistido no localStorage e em cookie para apoiar a protecao de rotas. A tela de configuracoes tambem usa localStorage para salvar preferencias de idioma, legendas, perfis e controle parental que ainda nao possuem persistencia no back-end.
+
+Interatividade e experiencia do usuario:
+O projeto aplica interatividade em filtros de catalogo, busca, abas de favoritos, ordenacao, carregamento progressivo de resultados, modais de edicao de conta, selecao de episodios e botao de favorito na pagina de conteudo. O hook useFavorites tambem realiza remocao otimista, atualizando a interface imediatamente e desfazendo a alteracao caso a API falhe.
 
 Middlewares:
 O back-end utiliza middlewares para autenticar usuarios, validar dados, restringir acesso administrativo, tratar erros e configurar seguranca. Isso mostra o uso de uma cadeia de processamento comum em frameworks web.
