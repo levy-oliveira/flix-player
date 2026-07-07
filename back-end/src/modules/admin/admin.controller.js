@@ -7,6 +7,16 @@ const getStats = asyncHandler(async (req, res) => {
     ok(res, stats)
 })
 
+const listUsers = asyncHandler(async (req, res) => {
+    const users = await adminService.listUsers()
+    ok(res, { users })
+})
+
+const createManager = asyncHandler(async (req, res) => {
+    const result = await adminService.createManager(req.body)
+    created(res, result, 'Gerente criado com sucesso')
+})
+
 const deleteUser = asyncHandler(async (req, res) => {
     await adminService.deleteUser(req.params.id)
     ok(res, {}, 'Usuário removido com sucesso')
@@ -18,7 +28,7 @@ const updateUserPlan = asyncHandler(async (req, res) => {
 })
 
 const addToBlacklist = asyncHandler(async (req, res) => {
-    const entry = await adminService.addToBlacklist(req.body.tmdbId, req.userId)
+    const entry = await adminService.addToBlacklist(req.body.tmdbId, req.body.mediaType, req.userId)
     created(res, { entry }, 'Título adicionado à blacklist')
 })
 
@@ -32,4 +42,4 @@ const listBlacklist = asyncHandler(async (req, res) => {
     ok(res, { blacklist })
 })
 
-module.exports = { getStats, deleteUser, updateUserPlan, addToBlacklist, removeFromBlacklist, listBlacklist }
+module.exports = { getStats, listUsers, createManager, deleteUser, updateUserPlan, addToBlacklist, removeFromBlacklist, listBlacklist }

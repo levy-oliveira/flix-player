@@ -7,6 +7,11 @@ const blacklistSchema = new mongoose.Schema(
             required: true,
             unique: true,
         },
+        mediaType: {
+            type: String,
+            enum: ['movie', 'tv'],
+            required: true,
+        },
         addedBy: {
             type: mongoose.Schema.Types.ObjectId,
             ref: 'User',

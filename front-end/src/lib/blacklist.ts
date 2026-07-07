@@ -13,7 +13,8 @@ export async function getBlacklistIds(): Promise<number[]> {
     }
 
     try {
-        const res = await fetch(`${process.env.BACKEND_URL}/admin/blacklist/public`)
+        const baseUrl = process.env.BACKEND_URL || process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:3001'
+        const res = await fetch(`${baseUrl}/admin/blacklist/public`)
 
         if (!res.ok) {
             console.error('Falha ao buscar blacklist:', res.status)

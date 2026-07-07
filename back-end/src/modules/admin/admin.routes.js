@@ -6,6 +6,8 @@ const validate = require('../../middlewares/validate')
 const  {listBlacklistIds}  = require('./admin.public.controller')
 const {
     getStats,
+    listUsers,
+    createManager,
     deleteUser,
     updateUserPlan,
     addToBlacklist,
@@ -48,6 +50,67 @@ const router = Router()
  *         description: Acesso negado
  */
 router.get('/stats', auth, requireManager, getStats)
+
+/**
+ * @swagger
+ * /admin/managers/bootstrap:
+ *   post:
+ *     summary: Cria um usuário gerente usando a senha de bootstrap do .env
+ *     tags: [Admin]
+ *     security: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [name, email, password, bootstrapPassword]
+ *             properties:
+ *               name:
+ *                 type: string
+ *               email:
+ *                 type: string
+ *               password:
+ *                 type: string
+ *               bootstrapPassword:
+ *                 type: string
+ *     responses:
+ *       201:
+ *         description: Gerente criado com sucesso
+ *       403:
+ *         description: Senha de bootstrap inválida
+ *       409:
+ *         description: Email já cadastrado
+ */
+router.post(
+    '/managers/bootstrap',
+    [
+        body('name').trim().notEmpty().withMessage('Nome é obrigatório'),
+        body('email').isEmail().withMessage('Email inválido'),
+        body('password').isLength({ min: 6 }).withMessage('Senha deve ter no mínimo 6 caracteres'),
+        body('bootstrapPassword').notEmpty().withMessage('Senha de bootstrap é obrigatória'),
+    ],
+    validate,
+    createManager
+)
+
+/**
+ * @swagger
+ * /admin/users:
+ *   get:
+ *     summary: Lista usuários para o painel de gerenciamento
+ *     tags: [Admin]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Usuários retornados com sucesso
+ *       401:
+ *         description: Não autorizado
+ *       403:
+ *         description: Acesso negado
+ */
+router.get('/users', auth, requireManager, listUsers)
 
 /**
  * @swagger
@@ -152,7 +215,10 @@ router.post(
     '/blacklist',
     auth,
     requireManager,
-    [body('tmdbId').isInt({ min: 1 }).withMessage('tmdbId deve ser um número inteiro positivo')],
+    [
+        body('tmdbId').isInt({ min: 1 }).withMessage('tmdbId deve ser um número inteiro positivo'),
+        body('mediaType').isIn(['movie', 'tv']).withMessage('mediaType inválido'),
+    ],
     validate,
     addToBlacklist
 )

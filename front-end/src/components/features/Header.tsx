@@ -2,11 +2,10 @@
 
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
-import { useState } from 'react'
+import { useState, useSyncExternalStore } from 'react'
 import { useAuth } from '@/hooks/useAuth'
 import { clsx } from 'clsx'
 
-// Figma: node 103-2 (Clone-Netflix). Genres | Country | Movies | Series + busca + ícones
 const NAV_LINKS = [
   { href: '/browse', label: 'Gêneros' },
   { href: '/browse?filter=country', label: 'País' },
@@ -20,15 +19,29 @@ export function Header() {
   const router = useRouter()
   const [search, setSearch] = useState('')
   const [menuOpen, setMenuOpen] = useState(false)
+  const hydrated = useSyncExternalStore(
+    () => () => {},
+    () => true,
+    () => false,
+  )
+  const currentHref = useSyncExternalStore(
+    (onStoreChange) => {
+      window.addEventListener('popstate', onStoreChange)
+      return () => window.removeEventListener('popstate', onStoreChange)
+    },
+    () => `${window.location.pathname}${window.location.search}`,
+    () => pathname,
+  )
 
-  // Verificação de login/role está comentada no middleware; aqui o ícone de
-  // gerente só aparece se o usuário logado for manager
-  const isManager = user?.role === 'manager'
+  const isManager = hydrated && user?.role === 'manager'
+  const navLinks = isManager
+    ? [...NAV_LINKS, { href: '/admin', label: 'Painel de Gerenciamento' }]
+    : NAV_LINKS
 
   const actions = [
     { href: '/profile', title: 'Perfil', icon: <IconUser /> },
     { href: '/favorites', title: 'Favoritos', icon: <IconStar /> },
-    ...(isManager ? [{ href: '/admin', title: 'Painel do gerente', icon: <IconUsers /> }] : []),
+    ...(isManager ? [{ href: '/admin', title: 'Painel de Gerenciamento', icon: <IconUsers /> }] : []),
     { href: '/settings', title: 'Configurações', icon: <IconGear /> },
   ]
 
@@ -41,23 +54,23 @@ export function Header() {
     }
   }
 
+  const isActiveLink = (href: string) => currentHref === href || (href === '/admin' && pathname.startsWith('/admin'))
+
   return (
-    <header className="fixed top-0 left-0 right-0 z-40 bg-background/90 backdrop-blur-sm border-b border-border">
-      <div className="max-w-screen-2xl mx-auto px-4 md:px-8 h-16 flex items-center gap-6 lg:gap-10">
-        {/* Logo */}
+    <header className="fixed top-0 left-0 right-0 z-40 border-b border-border bg-black/95 backdrop-blur-sm">
+      <div className="mx-auto flex h-20 max-w-screen-2xl items-center gap-6 px-4 md:px-8 lg:gap-9">
         <Link href="/" className="font-display text-2xl md:text-3xl text-primary tracking-wide flex-shrink-0">
           FLIX PLAYER
         </Link>
 
-        {/* Nav links (desktop) */}
-        <nav className="hidden lg:flex items-center gap-8">
-          {NAV_LINKS.map(({ href, label }) => (
+        <nav className="hidden lg:flex items-center gap-7 xl:gap-9">
+          {navLinks.map(({ href, label }) => (
             <Link
               key={href}
               href={href}
               className={clsx(
-                'text-lg font-sans transition-colors',
-                pathname === href ? 'text-text-primary' : 'text-text-secondary hover:text-text-primary'
+                'whitespace-nowrap font-sans text-lg xl:text-xl transition-colors',
+                isActiveLink(href) ? 'text-white' : 'text-[#d5d4d4] hover:text-white',
               )}
             >
               {label}
@@ -65,7 +78,6 @@ export function Header() {
           ))}
         </nav>
 
-        {/* Busca (desktop) */}
         <form onSubmit={handleSearch} className="hidden lg:block flex-1 max-w-[350px] ml-auto">
           <div className="relative w-full">
             <input
@@ -84,7 +96,6 @@ export function Header() {
           </div>
         </form>
 
-        {/* Ações (desktop) */}
         <div className="hidden lg:flex items-center gap-2">
           {actions.map(({ href, title, icon }) => (
             <Link
@@ -105,7 +116,6 @@ export function Header() {
           </button>
         </div>
 
-        {/* Hamburguer (mobile) */}
         <button
           onClick={() => setMenuOpen((open) => !open)}
           title={menuOpen ? 'Fechar menu' : 'Abrir menu'}
@@ -115,7 +125,6 @@ export function Header() {
         </button>
       </div>
 
-      {/* Menu mobile */}
       {menuOpen && (
         <div className="lg:hidden border-t border-border bg-background px-4 py-4 flex flex-col gap-4">
           <form onSubmit={handleSearch}>
@@ -137,12 +146,15 @@ export function Header() {
           </form>
 
           <nav className="flex flex-col gap-3">
-            {NAV_LINKS.map(({ href, label }) => (
+            {navLinks.map(({ href, label }) => (
               <Link
                 key={href}
                 href={href}
                 onClick={() => setMenuOpen(false)}
-                className="text-lg font-sans text-text-secondary hover:text-text-primary transition-colors"
+                className={clsx(
+                  'text-lg font-sans transition-colors',
+                  isActiveLink(href) ? 'text-white' : 'text-text-secondary hover:text-text-primary',
+                )}
               >
                 {label}
               </Link>
