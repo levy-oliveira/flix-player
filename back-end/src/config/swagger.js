@@ -1,5 +1,8 @@
 const swaggerJsdoc = require('swagger-jsdoc')
 const swaggerUi = require('swagger-ui-express')
+const path = require('path')
+
+const routeGlob = path.join(__dirname, '../modules/**/*.routes.js').replace(/\\/g, '/')
 
 const options = {
   definition: {
@@ -22,7 +25,7 @@ const options = {
     security: [{ bearerAuth: [] }],
   },
   // Aponta para onde os colegas vão escrever os comentários JSDoc das rotas
-  apis: ['./src/modules/**/*.routes.js'],
+  apis: [routeGlob],
 }
 
 const spec = swaggerJsdoc(options)
