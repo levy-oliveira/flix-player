@@ -23,7 +23,7 @@ const ADMIN_SUB_MENU_ITEMS = [
   { label: 'Painel', href: '/admin' },
   { label: 'Gestão de Contas', href: '/admin/accounts' },
   { label: 'Gestão de Conteúdos', href: '/admin/contents' },
-  { label: 'Estatísticas', href: '/admin#estatisticas' },
+  { label: 'Estatísticas', href: '/admin/statistics' },
 ]
 
 export function AdminDashboard() {
